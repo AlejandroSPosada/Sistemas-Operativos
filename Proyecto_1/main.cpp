@@ -7,11 +7,11 @@
 // Estructura del proceso
 typedef struct{
     int pid;
-    int pc; 
+    int pc;     
     int ax,bx,cx;
     int quantum;
     char estado[10];
-    std::vector <std::string> instrucciones;
+    std::vector <std::string> instruccionesq;
 } Proceso;
 
 // Funcion para obtener el valor entero del registro a evaluar
