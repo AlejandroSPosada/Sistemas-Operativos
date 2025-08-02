@@ -61,7 +61,7 @@ int main() {
         procesos.push_back(pro);
 
     }
-
+    
     for (const Proceso& p : procesos) {
         cout << "PID=" << p.pid << " AX=" << p.ax << " BX=" << p.bx
         << " CX=" << p.cx << " Quantum=" << p.quantum 
