@@ -1,0 +1,149 @@
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <vector>
+#include <cstring>
+#include <cstdio>
+
+typedef struct{
+    int pid = 0;
+    int pc = 0;     
+    int ax = 0,bx = 0,cx = 0;
+    int quantum = 0;
+    char estado[10];
+    std::vector <std::string> instrucciones;
+
+    void printSelf(){
+        std::cout << "pid: " <<  this->pid << std::endl;
+        std::cout << "pc: " << this->pc << std::endl;
+        std::cout << "ax: " << this->ax << ", bx: " << this->bx << ", cx: " << this->cx << std::endl;
+        std::cout << "quantum: " << this->quantum << std::endl;
+        std::cout << "estado: " << estado << std::endl;
+    }
+
+    std::string printRegisters(){
+        std::stringstream ss;
+        ss << "AX: " << this->ax << ", BX: " << this->bx << ", CX: " << this->cx << std::endl;
+        return ss.str();
+    }
+
+} Proceso;
+
+// Funcion para obtener el valor entero del registro a evaluar
+int obtenerValor(std::string& operando,const Proceso& p){
+    if(operando=="AX")return p.ax;
+    if(operando=="BX")return p.bx;
+    if(operando=="CX")return p.cx;
+    return std::stoi(operando);
+}
+
+// Funcion para asignar el valor nuevo a los registros
+void asignarRegistro(std::string& registro, int valor, Proceso& p){
+    if(registro == "AX") p.ax = valor;
+    else if(registro == "BX") p.bx = valor;
+    else if(registro == "CX") p.cx = valor;
+}
+
+// Funcion para ejecutar la instruccion en base a la operacion 
+// ADD, INC, NOP, SUB, JMP
+int ejecutarInstruccion(Proceso& p, std::string instruccion){
+    std::istringstream iss(instruccion);
+    std::string operacion, destino, fuente;
+
+    iss >> operacion;
+
+    if(operacion=="JMP"){
+        std::string jump;
+        iss >> jump;
+        return std::stoi(jump);
+    }
+    else if(operacion=="NOP");
+    else if(operacion=="INC"){
+        iss >> destino;
+        int valor = obtenerValor(destino, p) + 1;
+        asignarRegistro(destino, valor, p);
+    }
+    else if(operacion=="ADD"||operacion == "SUB"){
+        iss >> destino; destino = destino.substr(0,2);
+        iss >> fuente; fuente = fuente.substr(0,2);
+
+        int valDest = obtenerValor(destino,p);
+        int valFuente = obtenerValor(fuente,p);
+
+        int resultado = (operacion == "ADD") ? valDest + valFuente : valDest - valFuente;
+
+        asignarRegistro(destino, resultado, p);
+    }
+    else {  
+        std::cout <<"Instrucción desconocida" << instruccion << std::endl;
+    }
+    return -1;
+}
+
+void roundRobin(std::vector<Proceso>& procesos){
+    int cycles = 0;
+    int wProceso = 0; // tell us which proceso we are using in the procesos vector.
+    int i = 0;
+    std::string destino;
+
+    for(int i = 0; i < procesos.size(); i++){
+        cycles += procesos[i].instrucciones.size();
+    }
+    while(i < cycles){
+        Proceso &proceso = procesos[wProceso++];
+        for(int j = proceso.quantum; j > 0; j--){
+            if(proceso.pc == proceso.instrucciones.size()) break;
+            std::cout << "--- CICLO " << ++i << " ---" << std::endl;
+            std::cout << "Proceso activo: " << proceso.pid << std::endl;
+            std::cout << "Instruccion: " << proceso.instrucciones[proceso.pc] << std::endl;
+            std::cout << "Registros antes : " << proceso.printRegisters();
+            int jump = ejecutarInstruccion(proceso, proceso.instrucciones[proceso.pc++]);
+            if(jump != -1) proceso.pc = jump;
+            std::cout << "Registros despues: " << proceso.printRegisters();
+            std::cout << "Quantum restante: " << j-1 << std::endl << std::endl;
+        }
+        std::cout << "[Cambio de contexto]" << std::endl << std::endl; 
+        if(wProceso == procesos.size()) wProceso = 0;
+    }
+}
+
+int main(){
+    freopen("procesos.txt", "r", stdin);
+    std::vector<Proceso> procesos;
+    std::string line;
+    std::string token; // part of each linee separete by space
+
+    while (std::getline(std::cin, line)) {
+        std::istringstream iss(line);
+        Proceso procesoToInclude;
+        iss >> token; procesoToInclude.pid = std::stoi(token.substr(4));
+        iss >> token; procesoToInclude.ax = std::stoi(token.substr(3));
+        iss >> token; procesoToInclude.bx = std::stoi(token.substr(3));
+        iss >> token; procesoToInclude.cx = std::stoi(token.substr(3));
+        iss >> token; procesoToInclude.quantum = std::stoi(token.substr(8));
+        procesos.push_back(procesoToInclude);
+    }
+
+    procesos[0].instrucciones.push_back("ADD AX, BX");
+    procesos[0].instrucciones.push_back("INC AX");
+    procesos[0].instrucciones.push_back("NOP");
+    procesos[0].instrucciones.push_back("SUB CX, 1");
+
+    procesos[1].instrucciones.push_back("INC AX");
+    procesos[1].instrucciones.push_back("INC AX");
+    procesos[1].instrucciones.push_back("INC AX");
+    procesos[1].instrucciones.push_back("ADD BX, AX");
+    procesos[1].instrucciones.push_back("INC CX");
+    procesos[1].instrucciones.push_back("SUB AX, CX");
+    procesos[1].instrucciones.push_back("SUB AX, CX");
+
+    procesos[2].instrucciones.push_back("SUB CX, AX");
+    procesos[2].instrucciones.push_back("ADD BX, CX");
+    procesos[2].instrucciones.push_back("INC AX");
+    procesos[2].instrucciones.push_back("INC AX");
+    procesos[2].instrucciones.push_back("NOP");
+    procesos[2].instrucciones.push_back("NOP");
+
+    roundRobin(procesos);
+    return 0;
+}
