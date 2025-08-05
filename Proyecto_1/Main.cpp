@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstring>
 #include <cstdio>
+#include <fstream>
 
 typedef struct{
     int pid = 0;
@@ -124,25 +125,24 @@ int main(){
         procesos.push_back(procesoToInclude);
     }
 
-    procesos[0].instrucciones.push_back("ADD AX, BX");
-    procesos[0].instrucciones.push_back("INC AX");
-    procesos[0].instrucciones.push_back("NOP");
-    procesos[0].instrucciones.push_back("SUB CX, 1");
+    for (int i = 0; i < procesos.size(); ++i) {
+        std::string archivoNombre = std::to_string(i + 1) + ".txt"; // genera "1.txt", "2.txt", etc.
+        std::ifstream archivoInstrucciones(archivoNombre);
 
-    procesos[1].instrucciones.push_back("INC AX");
-    procesos[1].instrucciones.push_back("INC AX");
-    procesos[1].instrucciones.push_back("INC AX");
-    procesos[1].instrucciones.push_back("ADD BX, AX");
-    procesos[1].instrucciones.push_back("INC CX");
-    procesos[1].instrucciones.push_back("SUB AX, CX");
-    procesos[1].instrucciones.push_back("SUB AX, CX");
+        if (!archivoInstrucciones) {
+            std::cerr << "Error: No se encontro al archivo " << archivoNombre << std::endl;
+            continue;
+        }
 
-    procesos[2].instrucciones.push_back("SUB CX, AX");
-    procesos[2].instrucciones.push_back("ADD BX, CX");
-    procesos[2].instrucciones.push_back("INC AX");
-    procesos[2].instrucciones.push_back("INC AX");
-    procesos[2].instrucciones.push_back("NOP");
-    procesos[2].instrucciones.push_back("NOP");
+        std::string instruccion;
+        while (std::getline(archivoInstrucciones, instruccion)) {
+            if (!instruccion.empty()) {
+                procesos[i].instrucciones.push_back(instruccion);
+            }
+        }
+
+        archivoInstrucciones.close();
+    }
 
     roundRobin(procesos);
     return 0;
