@@ -1,3 +1,4 @@
+MUL CX, 2
 SUB CX, AX
 ADD BX, CX
 INC AX

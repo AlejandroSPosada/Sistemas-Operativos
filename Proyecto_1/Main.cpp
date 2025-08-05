@@ -64,14 +64,17 @@ int ejecutarInstruccion(Proceso& p, std::string instruccion){
         int valor = obtenerValor(destino, p) + 1;
         asignarRegistro(destino, valor, p);
     }
-    else if(operacion=="ADD"||operacion == "SUB"){
+    else if(operacion=="ADD"||operacion=="SUB"||operacion=="MUL"){
         iss >> destino; destino = destino.substr(0,2);
         iss >> fuente; fuente = fuente.substr(0,2);
 
         int valDest = obtenerValor(destino,p);
         int valFuente = obtenerValor(fuente,p);
 
-        int resultado = (operacion == "ADD") ? valDest + valFuente : valDest - valFuente;
+        int resultado;
+        if (operacion == "ADD") resultado = valDest + valFuente;
+        else if (operacion == "SUB") resultado = valDest - valFuente;
+        else resultado = valDest * valFuente;
 
         asignarRegistro(destino, resultado, p);
     }
@@ -126,7 +129,7 @@ int main(){
     }
 
     for (int i = 0; i < procesos.size(); ++i) {
-        std::string archivoNombre = std::to_string(i + 1) + ".txt"; // genera "1.txt", "2.txt", etc.
+        std::string archivoNombre = std::to_string(i + 1) + ".txt";
         std::ifstream archivoInstrucciones(archivoNombre);
 
         if (!archivoInstrucciones) {
