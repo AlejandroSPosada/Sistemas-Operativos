@@ -83,47 +83,66 @@ int ejecutarInstruccion(Proceso& p, std::string instruccion){
 
 void roundRobin(std::vector<Proceso>& procesos){
     int cycles = 0;
-    int wProceso = 0; // tell us which proceso we are using in the procesos vector.
+    int wProceso = 0; // índice del proceso actual
     int i = 0;
-    std::string destino;
 
-    // Ciclos totales tendra la cpu
-    for(int i = 0; i < procesos.size(); i++){
-        cycles += procesos[i].instrucciones.size();
-        cambiarEstado(procesos[i],"Listo"); //Inicializar los procesos como "Listo"
+    // Contar todos los ciclos a ejecutar (número total de instrucciones)
+    for (int k = 0; k < procesos.size(); k++) {
+        cycles += procesos[k].instrucciones.size();
+        cambiarEstado(procesos[k], "Listo"); // Inicializamos todos como "Listo"
     }
 
-    while(i < cycles){
+    while (i < cycles) {
         Proceso &proceso = procesos[wProceso++];
-        for(int j = proceso.quantum; j > 0; j--){
-            if(proceso.pc >= proceso.instrucciones.size()) continue;
-            cambiarEstado(proceso,"Ejecutando");
+
+        // 🔒 Saltar proceso si ya terminó
+        if (strcmp(proceso.estado, "Terminado") == 0) {
+            if (wProceso == procesos.size()) wProceso = 0;
+            continue;
+        }
+
+        for (int j = proceso.quantum; j > 0; j--) {
+            // ✅ Si ya no quedan instrucciones, marcar como terminado
+            if (proceso.pc >= proceso.instrucciones.size()) {
+                cambiarEstado(proceso, "Terminado");
+                break;
+            }
+
+            cambiarEstado(proceso, "Ejecutando");
             std::cout << "\n----------------------- CICLO " << ++i << " -----------------------" << std::endl;
             std::cout << "Proceso activo: " << proceso.pid << std::endl;
             std::cout << "Instruccion: " << proceso.instrucciones[proceso.pc] << std::endl;
             std::cout << "Estado: " << proceso.estado << std::endl;
             std::cout << "Registros antes: " << proceso.printRegisters();
             std::cout << ", Quantum: " << j << std::endl;
-            int jump = ejecutarInstruccion(proceso, proceso.instrucciones[proceso.pc++]);
-            if(jump != -1){
-                if (jump < proceso.pc) {
-                    cycles += proceso.pc - jump;
-                }
+
+            int jump = ejecutarInstruccion(proceso, proceso.instrucciones[proceso.pc]);
+
+            if (jump == -1) {
+                proceso.pc++;  // solo avanzar si no hubo salto
+            } else {
+                // 🧠 Ajustar ciclos para evitar que terminemos antes de tiempo
+                cycles += std::abs(proceso.pc - jump);
                 proceso.pc = jump;
-            } 
+            }
+
             std::cout << "Registros despues: " << proceso.printRegisters();
             std::cout << ", Quantum: " << j-1 << std::endl;
-            
-            if(proceso.pc >= proceso.instrucciones.size()) cambiarEstado(proceso, "Terminado");
-            else cambiarEstado(proceso, "Listo");
-            
+
+            // ✅ Actualizar estado según si terminó
+            if (proceso.pc >= proceso.instrucciones.size()) {
+                cambiarEstado(proceso, "Terminado");
+            } else {
+                cambiarEstado(proceso, "Listo");
+            }
+
             std::cout << "Estado: " << proceso.estado << std::endl;
-
         }
-        std::cout << "\n[Cambio de contexto]" << std::endl << std::endl; 
-        if(wProceso == procesos.size()) wProceso = 0;
-    }
 
+        std::cout << "\n[Cambio de contexto]" << std::endl << std::endl;
+
+        if (wProceso == procesos.size()) wProceso = 0;
+    }
 }
 
 int main(){
