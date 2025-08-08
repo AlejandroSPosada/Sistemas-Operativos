@@ -101,14 +101,14 @@ void roundRobin(std::vector<Proceso>& procesos){
     while (quedanProcesos()) {
         Proceso &proceso = procesos[wProceso++];
 
-        // 🔒 Saltar proceso si ya terminó
+        // Saltar proceso si ya terminó
         if (strcmp(proceso.estado, "Terminado") == 0) {
             if (wProceso == procesos.size()) wProceso = 0;
             continue;
         }
 
         for (int j = proceso.quantum; j > 0; j--) {
-            // ✅ Si ya no quedan instrucciones, marcar como terminado
+            // Si ya no quedan instrucciones, marcar como terminado
             if (proceso.pc >= proceso.instrucciones.size()) {
                 cambiarEstado(proceso, "Terminado");
                 break;
@@ -133,7 +133,7 @@ void roundRobin(std::vector<Proceso>& procesos){
             std::cout << "Registros despues: " << proceso.printRegisters();
             std::cout << ", Quantum: " << j-1 << std::endl;
 
-            // ✅ Actualizar estado según si terminó
+            // Actualizar estado según si terminó
             if (proceso.pc >= proceso.instrucciones.size()) {
                 cambiarEstado(proceso, "Terminado");
             } else {
@@ -142,6 +142,8 @@ void roundRobin(std::vector<Proceso>& procesos){
 
             std::cout << "Estado: " << proceso.estado << std::endl;
         }
+
+        std::cout << "\n[Cambio de contexto]" << std::endl << std::endl;
 
         std::cout << "\nGuardando proceso: PID=" << proceso.pid
                   << " AX=" << proceso.ax
@@ -156,7 +158,6 @@ void roundRobin(std::vector<Proceso>& procesos){
                   << " BX=" << proximo.bx
                   << " CX=" << proximo.cx << std::endl;
 
-        std::cout << "\n[Cambio de contexto]" << std::endl << std::endl;
     }
 }
 
