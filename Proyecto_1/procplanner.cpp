@@ -22,6 +22,21 @@ typedef struct{
 
 } Proceso;
 
+long memoriaRSS_KB() {
+    std::ifstream f("/proc/self/status");
+    std::string k;
+    while (f >> k) {
+        if (k == "VmRSS:") {
+            long kb; std::string unit;
+            f >> kb >> unit;
+            return kb;
+        }
+    }
+    return -1;
+}
+ 
+std::ofstream logFile("ejecucion.log");
+
 // Funcion para obtener el valor entero del registro a evaluar
 int obtenerValor(std::string& operando,const Proceso& p){
     if(operando=="AX")return p.ax;
@@ -116,11 +131,17 @@ void roundRobin(std::vector<Proceso>& procesos){
 
             cambiarEstado(proceso, "Ejecutando");
             std::cout << "\n----------------------- CICLO " << ++i << " -----------------------" << std::endl;
+            logFile << "\n----------------------- CICLO " << i << " -----------------------" << std::endl;
             std::cout << "Proceso activo: " << proceso.pid << std::endl;
+            logFile << "Proceso activo: " << proceso.pid << std::endl;
             std::cout << "Instruccion: " << proceso.instrucciones[proceso.pc] << std::endl;
+            logFile << "Instruccion: " << proceso.instrucciones[proceso.pc] << std::endl;
             std::cout << "Estado: " << proceso.estado << std::endl;
+            logFile << "Estado: " << proceso.estado << std::endl;
             std::cout << "Registros antes: " << proceso.printRegisters();
+            logFile << "Registros antes: " << proceso.printRegisters();
             std::cout << ", Quantum: " << j << std::endl;
+            logFile << ", Quantum: " << j << std::endl;
 
             int jump = ejecutarInstruccion(proceso, proceso.instrucciones[proceso.pc]);
 
@@ -131,7 +152,9 @@ void roundRobin(std::vector<Proceso>& procesos){
             }
 
             std::cout << "Registros despues: " << proceso.printRegisters();
+            logFile << "Registros despues: " << proceso.printRegisters();
             std::cout << ", Quantum: " << j-1 << std::endl;
+            logFile << ", Quantum: " << j-1 << std::endl;
 
             // Actualizar estado según si terminó
             if (proceso.pc >= proceso.instrucciones.size()) {
@@ -141,6 +164,7 @@ void roundRobin(std::vector<Proceso>& procesos){
             }
 
             std::cout << "Estado: " << proceso.estado << std::endl;
+            logFile << "Estado: " << proceso.estado << std::endl;
         }
 
         std::cout << "\n[Cambio de contexto]" << std::endl << std::endl;
@@ -198,5 +222,8 @@ int main(){
     }
 
     roundRobin(procesos);
+    std::cout << "\n[Memoria] VmRSS=" << memoriaRSS_KB() << " kB" << std::endl;
+    logFile   << "\n[Memoria] VmRSS=" << memoriaRSS_KB() << " kB" << std::endl;
+    logFile.close();
     return 0;
 }

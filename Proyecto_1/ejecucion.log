@@ -1,0 +1,154 @@
+
+----------------------- CICLO 1 -----------------------
+Proceso activo: 1
+Instruccion: ADD AX, BX
+Estado: Ejecutando
+Registros antes: AX: 3, BX: 1, CX: 3 , PC: 0, Quantum: 2
+Registros despues: AX: 4, BX: 1, CX: 3 , PC: 1, Quantum: 1
+Estado: Listo
+
+----------------------- CICLO 2 -----------------------
+Proceso activo: 1
+Instruccion: INC AX
+Estado: Ejecutando
+Registros antes: AX: 4, BX: 1, CX: 3 , PC: 1, Quantum: 1
+Registros despues: AX: 5, BX: 1, CX: 3 , PC: 2, Quantum: 0
+Estado: Listo
+
+----------------------- CICLO 3 -----------------------
+Proceso activo: 2
+Instruccion: INC AX
+Estado: Ejecutando
+Registros antes: AX: 0, BX: 0, CX: 0 , PC: 0, Quantum: 3
+Registros despues: AX: 1, BX: 0, CX: 0 , PC: 1, Quantum: 2
+Estado: Listo
+
+----------------------- CICLO 4 -----------------------
+Proceso activo: 2
+Instruccion: MUL AX, CX
+Estado: Ejecutando
+Registros antes: AX: 1, BX: 0, CX: 0 , PC: 1, Quantum: 2
+Registros despues: AX: 0, BX: 0, CX: 0 , PC: 2, Quantum: 1
+Estado: Listo
+
+----------------------- CICLO 5 -----------------------
+Proceso activo: 2
+Instruccion: INC AX
+Estado: Ejecutando
+Registros antes: AX: 0, BX: 0, CX: 0 , PC: 2, Quantum: 1
+Registros despues: AX: 1, BX: 0, CX: 0 , PC: 3, Quantum: 0
+Estado: Listo
+
+----------------------- CICLO 6 -----------------------
+Proceso activo: 3
+Instruccion: MUL CX, 2
+Estado: Ejecutando
+Registros antes: AX: 5, BX: 2, CX: 7 , PC: 0, Quantum: 4
+Registros despues: AX: 5, BX: 2, CX: 14 , PC: 1, Quantum: 3
+Estado: Listo
+
+----------------------- CICLO 7 -----------------------
+Proceso activo: 3
+Instruccion: SUB CX, AX
+Estado: Ejecutando
+Registros antes: AX: 5, BX: 2, CX: 14 , PC: 1, Quantum: 3
+Registros despues: AX: 5, BX: 2, CX: 9 , PC: 2, Quantum: 2
+Estado: Listo
+
+----------------------- CICLO 8 -----------------------
+Proceso activo: 3
+Instruccion: ADD BX, CX
+Estado: Ejecutando
+Registros antes: AX: 5, BX: 2, CX: 9 , PC: 2, Quantum: 2
+Registros despues: AX: 5, BX: 11, CX: 9 , PC: 3, Quantum: 1
+Estado: Listo
+
+----------------------- CICLO 9 -----------------------
+Proceso activo: 3
+Instruccion: INC AX
+Estado: Ejecutando
+Registros antes: AX: 5, BX: 11, CX: 9 , PC: 3, Quantum: 1
+Registros despues: AX: 6, BX: 11, CX: 9 , PC: 4, Quantum: 0
+Estado: Listo
+
+----------------------- CICLO 10 -----------------------
+Proceso activo: 1
+Instruccion: INC CX
+Estado: Ejecutando
+Registros antes: AX: 5, BX: 1, CX: 3 , PC: 2, Quantum: 2
+Registros despues: AX: 5, BX: 1, CX: 4 , PC: 3, Quantum: 1
+Estado: Listo
+
+----------------------- CICLO 11 -----------------------
+Proceso activo: 1
+Instruccion: NOP
+Estado: Ejecutando
+Registros antes: AX: 5, BX: 1, CX: 4 , PC: 3, Quantum: 1
+Registros despues: AX: 5, BX: 1, CX: 4 , PC: 4, Quantum: 0
+Estado: Listo
+
+----------------------- CICLO 12 -----------------------
+Proceso activo: 2
+Instruccion: ADD BX, AX
+Estado: Ejecutando
+Registros antes: AX: 1, BX: 0, CX: 0 , PC: 3, Quantum: 3
+Registros despues: AX: 1, BX: 1, CX: 0 , PC: 4, Quantum: 2
+Estado: Listo
+
+----------------------- CICLO 13 -----------------------
+Proceso activo: 2
+Instruccion: INC CX
+Estado: Ejecutando
+Registros antes: AX: 1, BX: 1, CX: 0 , PC: 4, Quantum: 2
+Registros despues: AX: 1, BX: 1, CX: 1 , PC: 5, Quantum: 1
+Estado: Listo
+
+----------------------- CICLO 14 -----------------------
+Proceso activo: 2
+Instruccion: SUB AX, CX
+Estado: Ejecutando
+Registros antes: AX: 1, BX: 1, CX: 1 , PC: 5, Quantum: 1
+Registros despues: AX: 0, BX: 1, CX: 1 , PC: 6, Quantum: 0
+Estado: Listo
+
+----------------------- CICLO 15 -----------------------
+Proceso activo: 3
+Instruccion: INC AX
+Estado: Ejecutando
+Registros antes: AX: 6, BX: 11, CX: 9 , PC: 4, Quantum: 4
+Registros despues: AX: 7, BX: 11, CX: 9 , PC: 5, Quantum: 3
+Estado: Listo
+
+----------------------- CICLO 16 -----------------------
+Proceso activo: 3
+Instruccion: NOP
+Estado: Ejecutando
+Registros antes: AX: 7, BX: 11, CX: 9 , PC: 5, Quantum: 3
+Registros despues: AX: 7, BX: 11, CX: 9 , PC: 6, Quantum: 2
+Estado: Listo
+
+----------------------- CICLO 17 -----------------------
+Proceso activo: 3
+Instruccion: NOP
+Estado: Ejecutando
+Registros antes: AX: 7, BX: 11, CX: 9 , PC: 6, Quantum: 2
+Registros despues: AX: 7, BX: 11, CX: 9 , PC: 7, Quantum: 1
+Estado: Terminado
+
+----------------------- CICLO 18 -----------------------
+Proceso activo: 1
+Instruccion: SUB CX, 1
+Estado: Ejecutando
+Registros antes: AX: 5, BX: 1, CX: 4 , PC: 4, Quantum: 2
+Registros despues: AX: 5, BX: 1, CX: 3 , PC: 5, Quantum: 1
+Estado: Terminado
+
+----------------------- CICLO 19 -----------------------
+Proceso activo: 2
+Instruccion: SUB AX, CX
+Estado: Ejecutando
+Registros antes: AX: 0, BX: 1, CX: 1 , PC: 6, Quantum: 3
+Registros despues: AX: -1, BX: 1, CX: 1 , PC: 7, Quantum: 2
+Estado: Terminado
+
+[Memoria] VmRSS=3328 kB
