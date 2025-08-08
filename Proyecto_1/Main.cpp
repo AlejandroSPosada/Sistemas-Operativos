@@ -76,23 +76,29 @@ int ejecutarInstruccion(Proceso& p, std::string instruccion){
         asignarRegistro(destino, resultado, p);
     }
     else {  
-        std::cout <<"Instrucción desconocida" << instruccion << std::endl;
+        std::cout <<"Instrucción desconocida " << instruccion << std::endl;
     }
     return -1;
 }
 
 void roundRobin(std::vector<Proceso>& procesos){
-    int cycles = 0;
     int wProceso = 0; // índice del proceso actual
     int i = 0;
 
-    // Contar todos los ciclos a ejecutar (número total de instrucciones)
-    for (int k = 0; k < procesos.size(); k++) {
-        cycles += procesos[k].instrucciones.size();
-        cambiarEstado(procesos[k], "Listo"); // Inicializamos todos como "Listo"
+    // Inicializamos todos los procesos como "Listo"
+    for (auto &p : procesos) {
+        cambiarEstado(p, "Listo");
     }
 
-    while (i < cycles) {
+    // Lambda para verificar si queda algún proceso vivo
+    auto quedanProcesos = [&]() {
+        for (auto &p : procesos) {
+            if (strcmp(p.estado, "Terminado") != 0) return true;
+        }
+        return false;
+    };
+
+    while (quedanProcesos()) {
         Proceso &proceso = procesos[wProceso++];
 
         // 🔒 Saltar proceso si ya terminó
@@ -121,8 +127,6 @@ void roundRobin(std::vector<Proceso>& procesos){
             if (jump == -1) {
                 proceso.pc++;  // solo avanzar si no hubo salto
             } else {
-                // 🧠 Ajustar ciclos para evitar que terminemos antes de tiempo
-                cycles += std::abs(proceso.pc - jump);
                 proceso.pc = jump;
             }
 
@@ -139,20 +143,20 @@ void roundRobin(std::vector<Proceso>& procesos){
             std::cout << "Estado: " << proceso.estado << std::endl;
         }
 
-        std::cout << "\n[Cambio de contexto]" << std::endl << std::endl;
         std::cout << "\nGuardando proceso: PID=" << proceso.pid
-        << " AX=" << proceso.ax
-        << " BX=" << proceso.bx
-        << " CX=" << proceso.cx << std::endl;
+                  << " AX=" << proceso.ax
+                  << " BX=" << proceso.bx
+                  << " CX=" << proceso.cx << std::endl;
 
         if (wProceso == procesos.size()) wProceso = 0;
 
         Proceso &proximo = procesos[wProceso];
         std::cout << "Cargando proceso: PID=" << proximo.pid
-        << " AX=" << proximo.ax
-        << " BX=" << proximo.bx
-        << " CX=" << proximo.cx << std::endl;
+                  << " AX=" << proximo.ax
+                  << " BX=" << proximo.bx
+                  << " CX=" << proximo.cx << std::endl;
 
+        std::cout << "\n[Cambio de contexto]" << std::endl << std::endl;
     }
 }
 
@@ -178,7 +182,7 @@ int main(){
         std::ifstream archivoInstrucciones(archivoNombre);
 
         if (!archivoInstrucciones) {
-            std::cerr << "Error: No se encontro al archivo " << archivoNombre << std::endl;
+            std::cerr << "Error: No se encontro el archivo " << archivoNombre << std::endl;
             continue;
         }
 
