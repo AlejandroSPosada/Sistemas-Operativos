@@ -38,5 +38,5 @@ NOP
 
 ## Ejecucion:
 
-Una vez definidos los procesos y sus respectivas instrucciones, abra la consola y dirigase a la ubicacion de la carpeta que contiene `procesos.txt` y los archivos con las instrucciones.
-Una vez ahi debera ejecutar el comando `g++ Main.cpp -o programa`, seguido por el comando `./programa `. Una vez realizado esto, el programa iniciara su ejecucion.
+Una vez definidos los procesos y sus respectivas instrucciones, abra la consola y dirigase a la ubicacion de la carpeta que contiene `procesos.txt`, `procplanner.cpp`, y los archivos con las instrucciones.
+Una vez ahi debera ejecutar el comando `g++ procplanner.cpp -o programa`, seguido por el comando `./programa `. Una vez realizado esto, el programa iniciara su ejecucion.
