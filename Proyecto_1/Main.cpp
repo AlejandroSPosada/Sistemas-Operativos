@@ -11,20 +11,12 @@ typedef struct{
     int pc = 0;     
     int ax = 0,bx = 0,cx = 0;
     int quantum = 0;
-    char estado[10];
+    char estado[10]; // "Listo", "Ejecutando", "Terminado"
     std::vector <std::string> instrucciones;
-
-    void printSelf(){
-        std::cout << "pid: " <<  this->pid << std::endl;
-        std::cout << "pc: " << this->pc << std::endl;
-        std::cout << "ax: " << this->ax << ", bx: " << this->bx << ", cx: " << this->cx << std::endl;
-        std::cout << "quantum: " << this->quantum << std::endl;
-        std::cout << "estado: " << estado << std::endl;
-    }
 
     std::string printRegisters(){
         std::stringstream ss;
-        ss << "AX: " << this->ax << ", BX: " << this->bx << ", CX: " << this->cx << std::endl;
+        ss << "AX: " << this->ax << ", BX: " << this->bx << ", CX: " << this->cx << " , PC: " << this->pc;
         return ss.str();
     }
 
@@ -43,6 +35,11 @@ void asignarRegistro(std::string& registro, int valor, Proceso& p){
     if(registro == "AX") p.ax = valor;
     else if(registro == "BX") p.bx = valor;
     else if(registro == "CX") p.cx = valor;
+}
+
+// Cambiar estado de los procesos
+void cambiarEstado(Proceso& p, const std::string& nuevoEstado){
+    strcpy(p.estado, nuevoEstado.c_str());
 }
 
 // Funcion para ejecutar la instruccion en base a la operacion 
@@ -90,25 +87,43 @@ void roundRobin(std::vector<Proceso>& procesos){
     int i = 0;
     std::string destino;
 
+    // Ciclos totales tendra la cpu
     for(int i = 0; i < procesos.size(); i++){
         cycles += procesos[i].instrucciones.size();
+        cambiarEstado(procesos[i],"Listo"); //Inicializar los procesos como "Listo"
     }
+
     while(i < cycles){
         Proceso &proceso = procesos[wProceso++];
         for(int j = proceso.quantum; j > 0; j--){
-            if(proceso.pc == proceso.instrucciones.size()) break;
-            std::cout << "--- CICLO " << ++i << " ---" << std::endl;
+            if(proceso.pc >= proceso.instrucciones.size()) continue;
+            cambiarEstado(proceso,"Ejecutando");
+            std::cout << "\n----------------------- CICLO " << ++i << " -----------------------" << std::endl;
             std::cout << "Proceso activo: " << proceso.pid << std::endl;
             std::cout << "Instruccion: " << proceso.instrucciones[proceso.pc] << std::endl;
-            std::cout << "Registros antes : " << proceso.printRegisters();
+            std::cout << "Estado: " << proceso.estado << std::endl;
+            std::cout << "Registros antes: " << proceso.printRegisters();
+            std::cout << ", Quantum: " << j << std::endl;
             int jump = ejecutarInstruccion(proceso, proceso.instrucciones[proceso.pc++]);
-            if(jump != -1) proceso.pc = jump;
+            if(jump != -1){
+                if (jump < proceso.pc) {
+                    cycles += proceso.pc - jump;
+                }
+                proceso.pc = jump;
+            } 
             std::cout << "Registros despues: " << proceso.printRegisters();
-            std::cout << "Quantum restante: " << j-1 << std::endl << std::endl;
+            std::cout << ", Quantum: " << j-1 << std::endl;
+            
+            if(proceso.pc >= proceso.instrucciones.size()) cambiarEstado(proceso, "Terminado");
+            else cambiarEstado(proceso, "Listo");
+            
+            std::cout << "Estado: " << proceso.estado << std::endl;
+
         }
-        std::cout << "[Cambio de contexto]" << std::endl << std::endl; 
+        std::cout << "\n[Cambio de contexto]" << std::endl << std::endl; 
         if(wProceso == procesos.size()) wProceso = 0;
     }
+
 }
 
 int main(){
