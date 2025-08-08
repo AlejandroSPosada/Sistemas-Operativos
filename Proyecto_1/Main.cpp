@@ -140,8 +140,19 @@ void roundRobin(std::vector<Proceso>& procesos){
         }
 
         std::cout << "\n[Cambio de contexto]" << std::endl << std::endl;
+        std::cout << "\nGuardando proceso: PID=" << proceso.pid
+        << " AX=" << proceso.ax
+        << " BX=" << proceso.bx
+        << " CX=" << proceso.cx << std::endl;
 
         if (wProceso == procesos.size()) wProceso = 0;
+
+        Proceso &proximo = procesos[wProceso];
+        std::cout << "Cargando proceso: PID=" << proximo.pid
+        << " AX=" << proximo.ax
+        << " BX=" << proximo.bx
+        << " CX=" << proximo.cx << std::endl;
+
     }
 }
 
